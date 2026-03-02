@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeniorShield Cybersecurity</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:#0b1120;color:white;overflow-x:hidden;}
+
+.hidden{display:none;}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:#0f172a;
+border-bottom:1px solid #1e293b;
+}
+
+.logo{
+font-size:22px;
+font-weight:700;
+color:#00f2ff;
+letter-spacing:1px;
+}
+
+.nav button{
+background:none;
+border:1px solid #00f2ff;
+color:#00f2ff;
+padding:8px 20px;
+border-radius:20px;
+cursor:pointer;
+}
+
+.hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+background:radial-gradient(circle at center,#0f172a 0%,#020617 100%);
+animation:fadeIn 2s ease;
+}
+
+.hero h1{
+font-size:48px;
+margin-bottom:20px;
+background:linear-gradient(90deg,#00f2ff,#4f46e5);
+-webkit-background-clip:text;
+color:transparent;
+}
+
+.hero p{
+font-size:18px;
+opacity:0.7;
+margin-bottom:30px;
+}
+
+.hero button{
+padding:12px 30px;
+border:none;
+border-radius:30px;
+background:#00f2ff;
+font-weight:600;
+cursor:pointer;
+}
+
+.login-box{
+background:#111827;
+padding:40px;
+border-radius:15px;
+width:350px;
+margin:auto;
+margin-top:120px;
+box-shadow:0 0 30px rgba(0,242,255,0.2);
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+background:#1e293b;
+color:white;
+}
+
+.dashboard{
+padding:40px 60px;
+}
+
+.card{
+background:#111827;
+padding:25px;
+border-radius:15px;
+margin-bottom:25px;
+box-shadow:0 0 20px rgba(0,242,255,0.08);
+}
+
+textarea{
+width:100%;
+height:100px;
+background:#1e293b;
+border:none;
+border-radius:10px;
+padding:10px;
+color:white;
+}
+
+button.primary{
+background:#00f2ff;
+border:none;
+padding:10px 20px;
+border-radius:20px;
+margin-top:10px;
+cursor:pointer;
+}
+
+.result{
+margin-top:15px;
+font-weight:600;
+}
+
+.log{
+font-size:13px;
+background:#1e293b;
+padding:10px;
+border-radius:10px;
+max-height:120px;
+overflow:auto;
+}
+
+.monitor{
+height:6px;
+background:linear-gradient(90deg,#00f2ff,#4f46e5,#00f2ff);
+background-size:200% 100%;
+animation:monitor 2s linear infinite;
+border-radius:5px;
+margin-top:10px;
+}
+
+@keyframes monitor{
+0%{background-position:0%;}
+100%{background-position:200%;}
+}
+
+@keyframes fadeIn{
+from{opacity:0;}
+to{opacity:1;}
+}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<section id="home">
+<header>
+<div class="logo">SENIORSHIELD</div>
+<div class="nav">
+<button onclick="showLogin()">Login</button>
+</div>
+</header>
+
+<div class="hero">
+<h1>Protecting Elderly from Digital Attacks</h1>
+<p>AI-powered WhatsApp Hack Detection System</p>
+<button onclick="showLogin()">Access Dashboard</button>
+</div>
+</section>
+
+<!-- LOGIN -->
+<section id="login" class="hidden">
+<div class="login-box">
+<h2>Login Dashboard</h2>
+<input type="text" id="user" placeholder="Username">
+<input type="password" id="pass" placeholder="Password">
+<button class="primary" onclick="login()">Login</button>
+</div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="hidden">
+<header>
+<div class="logo">SENIORSHIELD DASHBOARD</div>
+<div class="nav">
+<button onclick="logout()">Logout</button>
+</div>
+</header>
+
+<div class="dashboard">
+
+<div class="card">
+<h3>WA Hack Detection Scanner</h3>
+<textarea id="inputText" placeholder="Tempel pesan mencurigakan..."></textarea>
+<button class="primary" onclick="scan()">Scan</button>
+<div class="monitor"></div>
+<div id="result" class="result"></div>
+</div>
+
+<div class="card">
+<h3>Daily Attack Statistics</h3>
+<canvas id="chart"></canvas>
+</div>
+
+<div class="card">
+<h3>Detection Logs</h3>
+<div id="logBox" class="log"></div>
+</div>
+
+</div>
+</section>
+
+<script>
+
+// NAVIGATION
+function showLogin(){
+document.getElementById("home").classList.add("hidden");
+document.getElementById("login").classList.remove("hidden");
+}
+
+function login(){
+let u=document.getElementById("user").value;
+let p=document.getElementById("pass").value;
+if(u==="admin" && p==="1234"){
+document.getElementById("login").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+}else{
+alert("Login gagal");
+}
+}
+
+function logout(){
+location.reload();
+}
+
+// CHART
+let high=0, medium=0, low=0;
+const ctx=document.getElementById("chart").getContext("2d");
+const chart=new Chart(ctx,{
+type:'bar',
+data:{
+labels:['High','Medium','Low'],
+datasets:[{
+label:'Serangan',
+data:[0,0,0],
+backgroundColor:['#ff4d4d','#ffcc00','#00ff88']
+}]
+},
+options:{plugins:{legend:{labels:{color:'white'}}},
+scales:{x:{ticks:{color:'white'}},y:{ticks:{color:'white'}}}}
+});
+
+// SCAN
+function scan(){
+let text=document.getElementById("inputText").value.toLowerCase();
+let score=0;
+
+let patterns=["otp","kode","verifikasi","akun diblokir","login perangkat baru","klik link","hadiah","transfer"];
+patterns.forEach(p=>{if(text.includes(p))score+=15;});
+if(text.match(/http/))score+=20;
+if(text.match(/\d{4,6}/))score+=20;
+
+let status="";
+if(score>=60){status="HIGH RISK - Hack Attempt!";high++;notify();}
+else if(score>=30){status="MEDIUM RISK";medium++;}
+else{status="LOW RISK";low++;}
+
+document.getElementById("result").innerHTML="Score: "+score+" → "+status;
+addLog(status);
+updateChart();
+}
+
+// LOG
+function addLog(msg){
+let time=new Date().toLocaleTimeString();
+document.getElementById("logBox").innerHTML+="["+time+"] "+msg+"<br>";
+}
+
+function updateChart(){
+chart.data.datasets[0].data=[high,medium,low];
+chart.update();
+}
+
+// NOTIFICATION
+function notify(){
+if(Notification.permission!=="granted"){
+Notification.requestPermission();
+}else{
+new Notification("SeniorShield Alert",{body:"WA Hack Attempt Detected!"});
+}
+}
+
+</script>
+</body>
+</html>
