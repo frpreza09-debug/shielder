@@ -35,32 +35,35 @@
     color: #00f2ff;
   }
   .container {
-    padding: 40px 60px;
+    padding: 20px 20px;
+    max-width: 1200px;
+    margin: auto;
   }
   /* Card styles */
   .card {
     background: #141b2d;
-    padding: 30px;
+    padding: 20px;
     border-radius: 15px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
   }
   h2 {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: #00f2ff;
+    font-size: 20px;
   }
   textarea {
     width: 100%;
-    height: 120px;
-    padding: 15px;
+    height: 100px;
+    padding: 10px;
     border-radius: 10px;
     border: none;
     background: #0f1626;
     color: white;
   }
   button {
-    margin-top: 15px;
-    padding: 12px 25px;
+    margin-top: 10px;
+    padding: 10px 20px;
     background: #00f2ff;
     border: none;
     border-radius: 30px;
@@ -71,9 +74,9 @@
     box-shadow: 0 0 15px #00f2ff;
   }
   .result {
-    margin-top: 20px;
+    margin-top: 15px;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
   }
   .risk-high {
     color: #ff4d4d;
@@ -86,13 +89,13 @@
   }
   /* Log styles */
   .log {
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 12px;
+    line-height: 1.4;
     color: #00ff99;
-    max-height: 150px;
-    overflow: auto;
+    max-height: 120px;
+    overflow-y: auto;
     background: #0f1626;
-    padding: 10px;
+    padding: 8px;
     border-radius: 10px;
   }
   /* Chart styles */
@@ -105,26 +108,39 @@
   .grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 20px;
+    gap: 15px;
+  }
+  @media(max-width:768px){
+    .grid {
+      grid-template-columns: 1fr;
+    }
   }
   .map-section {
-    height: 300px;
+    display: flex;
+    flex-direction: column;
   }
   #map {
-    height: 100%;
+    height: 250px;
     border-radius: 10px;
+  }
+  /* Lokasi pengguna di bawah peta */
+  #userLocationInfo {
+    margin-top: 10px;
+    background: #111827;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
   }
   /* Weekly attack chart container */
   .weekly-chart {
-    margin-top: 30px;
+    margin-top: 20px;
   }
-  /* Detection & Warning Recent */
+  /* Deteksi & Peringatan */
   .updates {
-    margin-top: 30px;
+    margin-top: 20px;
   }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -147,10 +163,11 @@
       <h2>Statistik Deteksi</h2>
       <canvas id="attackChart" height="150"></canvas>
     </div>
-    <div class="card">
+    <div class="card map-section">
       <h2>Zona Risiko dan Lokasi Pengguna</h2>
       <div id="mapPlaceholder" style="height:150px; margin-bottom:10px;">Lokasi pengguna akan muncul di sini</div>
       <div id="map"></div>
+      <div id="userLocationInfo"></div>
     </div>
   </div>
 
@@ -266,21 +283,26 @@ async function getUserLocation() {
   try {
     const response = await fetch('https://ipinfo.io/json?token=YOUR_TOKEN');
     const data = await response.json();
-    if(window.myMap && data.loc){
+    if(data.loc){
       const [lat, lon] = data.loc.split(',');
+      window.userCoords = [lat, lon];
+
+      // Tampilkan lokasi di peta
       window.myMap.setView([lat, lon], 13);
-      L.marker([lat, lon]).addTo(window.myMap)
-        .bindPopup(`${data.city}, ${data.region}, ${data.country}`)
-        .openPopup();
-      // Tampilkan lokasi di bawah zona risiko
-      document.getElementById('mapPlaceholder').innerHTML = `
+      if(window.markerUser) {
+        window.markerUser.setLatLng([lat, lon]);
+      } else {
+        window.markerUser = L.marker([lat, lon]).addTo(window.myMap);
+      }
+
+      // Tampilkan info lokasi di bawah peta
+      document.getElementById('userLocationInfo').innerHTML = `
         <strong>Lokasi Anda:</strong><br>
         ${data.city}, ${data.region}<br>
         Latitude: ${lat}<br>
         Longitude: ${lon}
       `;
     }
-    window.userCoords = [lat, lon];
   } catch (err) {
     console.log('Gagal mendapatkan lokasi:', err);
   }
